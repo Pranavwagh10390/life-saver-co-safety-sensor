@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Saver CO Safety Sensor for Gas Geyser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9f7ef;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+        }
+        .chart-container {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Life Saver CO Safety Sensor for Gas Geyser</h1>
+        <form id="emissionForm">
+            <div class="form-group">
+                <label for="emission">Carbon Emission (kg CO2 per hour):</label>
+                <input type="number" id="emission" name="emission" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="hours">Usage Hours Per Day:</label>
+                <input type="number" id="hours" name="hours" step="1" min="0" required>
+            </div>
+            <button type="button" onclick="calculateImpact()">Calculate Impact</button>
+        </form>
+
+        <div class="result" id="result" style="display: none;"></div>
+
+        <div class="chart-container" id="chartContainer" style="display: none;">
+            <canvas id="emissionChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function calculateImpact() {
+            const emission = parseFloat(document.getElementById('emission').value);
+            const hours = parseFloat(document.getElementById('hours').value);
+
+            if (isNaN(emission) || isNaN(hours)) {
+                alert('Please enter valid values.');
+                return;
+            }
+
+            const dailyEmission = emission * hours;
+            const monthlyEmission = dailyEmission * 30;
+            const yearlyEmission = dailyEmission * 365;
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <h3>Emission Impact:</h3>
+                <p><strong>Daily Emission:</strong> ${dailyEmission.toFixed(2)} kg CO2</p>
+                <p><strong>Monthly Emission:</strong> ${monthlyEmission.toFixed(2)} kg CO2</p>
+                <p><strong>Yearly Emission:</strong> ${yearlyEmission.toFixed(2)} kg CO2</p>
+            `;
+            resultDiv.style.display = 'block';
+
+            displayChart([dailyEmission, monthlyEmission, yearlyEmission]);
+        }
+
+        function displayChart(data) {
+            const ctx = document.getElementById('emissionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Daily', 'Monthly', 'Yearly'],
+                    datasets: [{
+                        label: 'Carbon Emission (kg CO2)',
+                        data: data,
+                        backgroundColor: ['#007bff', '#17a2b8', '#28a745'],
+                        borderColor: ['#0056b3', '#0d6674', '#19692c'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('chartContainer').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
